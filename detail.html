@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelGo! | Detail Restoran</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family:'Poppins',sans-serif; background:#fff8ec; margin:0; color:#222;}
+    .container { max-width:700px; margin:40px auto; background:white; border-radius: 28px; box-shadow:0 15px 30px rgba(0,0,0,.08);padding:32px;}
+    .header {display:flex;align-items:center;gap:18px;}
+    .img-icon {font-size:4rem;}
+    .title {font-size:2rem;margin:0;}
+    .desc, .loc, .hours, .facility, .price-range, .rating {margin:14px 0;}
+    .menu-list {margin:16px 0;padding:0; list-style: disc inside;}
+    .back-link {margin-top:30px; display:block;}
+  </style>
+</head>
+<body>
+  <div class="container" id="detailContainer"></div>
+  <script>
+    // Copied from the main page
+    const restaurants = [
+      { id:1, name:"Lumpang Emas Signature - Prapanca", category:"indonesian",
+        location:"Jl. Prapanca Raya No.40A, Pulo, Kec. Kby. Baru, Jakarta Selatan",
+        operationHours:"10.00–22.00 (Setiap hari), Breakfast Sabtu-Minggu 07.00-11.00",
+        priceRange:"Rp87k - Rp393k",
+        rating:4.8, totalReviews:1127,
+        facilities:"Wheelchair access, Toilet, Wi-Fi, Bar on site, Outdoor seating, Delivery, Takeaway, Dine-in",
+        menuHighlights:"Paru Asam Manis, Kulit Ayam Goreng, Steak Nusantara",
+        phone:"(021)80600900", website:"lumpangemas.com",
+        imgIcon:"🍖", totalSeats:42,
+        seatMap:[], description:"Great coffee & dessert, casual cozy."
+      },
+      { id:2, name:"Cerita Rasa Nusantara", category:"indonesian",
+        location:"Jl. Ampera Raya No.9, Cilandak Timur, Jakarta Selatan",
+        operationHours:"10.00–22.00 setiap hari",
+        priceRange:"Rp39k - Rp169k",
+        rating:4.6, totalReviews:4795,
+        facilities:"Wheelchair access, Live music, Free parking, Wi-Fi, Private dining, Kids' menu, Outdoor seating",
+        menuHighlights:"Gurame Bakar, Ayam Taliwang, Nasi Goreng",
+        phone:"02178831600", website:"ceritarasa.co.id",
+        imgIcon:"🍛", totalSeats:56,
+        seatMap:[], description:"Classic Indonesian, live music, family friendly."
+      },
+      { id:3, name:"Jakarta Restaurant & The Courtyard", category:"international",
+        location:"Jl. Brawijaya Raya No.26, Pulo, Kebayoran Baru",
+        operationHours:"07.00–22.00 setiap hari",
+        priceRange:"Rp115k - Rp595k",
+        rating:4.7, totalReviews:639,
+        facilities:"Halal food, Private dining, Art Deco, Leafy courtyard, Valet parking, Kids' menu",
+        menuHighlights:"Sop Buntut, Nasi Goreng Dharmawangsa, Beef Tenderloin",
+        phone:"08111025999", website:"the-dharmawangsa.com",
+        imgIcon:"🍽️", totalSeats:78,
+        seatMap:[], description:"Hotel restaurant Art Deco & courtyard."
+      },
+      { id:4, name:"Plataran Dharmawangsa", category:"indonesian",
+        location:"Jl. Dharmawangsa Raya No.6, Pulo, Kebayoran Baru",
+        operationHours:"11.00–22.00 setiap hari",
+        priceRange:"Rp55k - Rp225k",
+        rating:4.7, totalReviews:4112,
+        facilities:"Live music, Joglo house, Valet parking, Organic dishes, Vegetarian options, Cocktails",
+        menuHighlights:"Dendeng Batokok, Empal Gentong, Udang Gandum",
+        phone:"(021)29044167", website:"plataran.com",
+        imgIcon:"🍲", totalSeats:64,
+        seatMap:[], description:"Joglo tradisional, otentik, romantis."
+      },
+      { id:5, name:"Abunawas Restaurant - Kemang", category:"middle-eastern",
+        location:"Jl. Kemang Utara No.15, Bangka, Mampang Prapatan",
+        operationHours:"09.00–21.45 setiap hari",
+        priceRange:"Rp42k - Rp855k",
+        rating:4.6, totalReviews:3173,
+        facilities:"Middle Eastern decor, Plush seating, Free Wi-Fi, Valet parking, Kids' menu, Private dining",
+        menuHighlights:"Mandhi Lamb, Briyani, Mix Grill, Hummus",
+        phone:"(021)71794691", website:"abunawasresto.com",
+        imgIcon:"🥘", totalSeats:50,
+        seatMap:[], description:"Timur Tengah otentik, mewah."
+      }
+    ];
+
+    // Get id from query params, like ?id=2
+    function getRestaurantIdFromQuery() {
+      const params = new URLSearchParams(location.search);
+      return +params.get('id');
+    }
+
+    function renderRestaurantDetail(resto) {
+      if (!resto) {
+        document.getElementById("detailContainer").innerHTML = "<p>Restoran tidak ditemukan.</p>";
+        return;
+      }
+      const menuList = resto.menuHighlights.split(',')
+        .map(m => `<li>${m.trim()}</li>`).join('');
+      document.title = resto.name + " | TravelGo!";
+      document.getElementById('detailContainer').innerHTML = `
+        <div class="header">
+          <span class="img-icon">${resto.imgIcon}</span>
+          <div>
+            <h1 class="title">${resto.name}</h1>
+            <div class="rating">⭐ ${resto.rating} (${resto.totalReviews} ulasan)</div>
+          </div>
+        </div>
+        <div class="desc">${resto.description}</div>
+        <div class="loc"><i class="fas fa-map-marker-alt"></i> ${resto.location}</div>
+        <div class="hours"><i class="far fa-clock"></i> Jam Operasional: ${resto.operationHours}</div>
+        <div class="facility"><i class="fas fa-couch"></i> Fasilitas: ${resto.facilities}</div>
+        <div class="price-range"><i class="fas fa-tag"></i> Harga: ${resto.priceRange}</div>
+        <div class="menu">
+          <strong><i class="fas fa-utensils"></i> Menu Andalan:</strong>
+          <ul class="menu-list">${menuList}</ul>
+        </div>
+        <div><i class="fas fa-phone"></i> ${resto.phone} | <i class="fas fa-globe"></i> ${resto.website}</div>
+        <a class="back-link" href="index.html">&laquo; Kembali ke daftar restoran</a>
+      `;
+    }
+
+    // Main render
+    const restoId = getRestaurantIdFromQuery();
+    const resto = restaurants.find(r => r.id === restoId);
+    renderRestaurantDetail(resto);
+    <div class="resto-card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;">
+
+  <!-- 1. Lumpang Emas Signature - Prapanca -->
+  <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+    <img src="images/lumpang-emas.jpg" alt="Lumpang Emas Signature" style="width:100%;height:180px;object-fit:cover;">
+    <div style="padding:18px;">
+      <div style="font-size:1.2rem;font-weight:700">🍖 Lumpang Emas Signature - Prapanca</div>
+      <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Prapanca Raya No.40A, Pulo, Kec. Kby. Baru, Jakarta Selatan</div>
+      <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.8</span> <span style="font-size:.8rem;">(1127 ulasan)</span></div>
+      <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Paru Asam Manis, Kulit Ayam Goreng, Steak Nusantara</span></div>
+      <div style="color: #2c6e2f; font-weight:600;">Rp87k - Rp393k</div>
+    </div>
+  </div>
+
+  <!-- 2. Cerita Rasa Nusantara -->
+  <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+    <img src="images/cerita-rasa.jpg" alt="Cerita Rasa Nusantara" style="width:100%;height:180px;object-fit:cover;">
+    <div style="padding:18px;">
+      <div style="font-size:1.2rem;font-weight:700">🍛 Cerita Rasa Nusantara</div>
+      <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Ampera Raya No.9, Cilandak Timur, Jakarta Selatan</div>
+      <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.6</span> <span style="font-size:.8rem;">(4795 ulasan)</span></div>
+      <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Gurame Bakar, Ayam Taliwang, Nasi Goreng</span></div>
+      <div style="color: #2c6e2f; font-weight:600;">Rp39k - Rp169k</div>
+    </div>
+  </div>
+
+  <!-- 3. Jakarta Restaurant & The Courtyard -->
+  <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+    <img src="images/jakarta-restaurant.jpg" alt="Jakarta Restaurant & The Courtyard" style="width:100%;height:180px;object-fit:cover;">
+    <div style="padding:18px;">
+      <div style="font-size:1.2rem;font-weight:700">🍽️ Jakarta Restaurant &amp; The Courtyard</div>
+      <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Brawijaya Raya No.26, Pulo, Kebayoran Baru</div>
+      <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.7</span> <span style="font-size:.8rem;">(639 ulasan)</span></div>
+      <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Sop Buntut, Nasi Goreng Dharmawangsa, Beef Tenderloin</span></div>
+      <div style="color: #2c6e2f; font-weight:600;">Rp115k - Rp595k</div>
+    </div>
+  </div>
+
+  <!-- 4. Plataran Dharmawangsa -->
+  <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+    <img src="images/plataran.jpg" alt="Plataran Dharmawangsa" style="width:100%;height:180px;object-fit:cover;">
+    <div style="padding:18px;">
+      <div style="font-size:1.2rem;font-weight:700">🍲 Plataran Dharmawangsa</div>
+      <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Dharmawangsa Raya No.6, Pulo, Kebayoran Baru</div>
+      <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.7</span> <span style="font-size:.8rem;">(4112 ulasan)</span></div>
+      <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Dendeng Batokok, Empal Gentong, Udang Gandum</span></div>
+      <div style="color: #2c6e2f; font-weight:600;">Rp55k - Rp225k</div>
+    </div>
+  </div>
+
+  <!-- 5. Abunawas Restaurant - Kemang -->
+  <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+    <img src="images/abunawas.jpg" alt="Abunawas Restaurant - Kemang" style="width:100%;height:180px;object-fit:cover;">
+    <div style="padding:18px;">
+      <div style="font-size:1.2rem;font-weight:700">🥘 Abunawas Restaurant - Kemang</div>
+      <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Kemang Utara No.15, Bangka, Mampang Prapatan</div>
+      <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.6</span> <span style="font-size:.8rem;">(3173 ulasan)</span></div>
+      <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Mandhi Lamb, Briyani, Mix Grill, Hummus</span></div>
+      <div style="color: #2c6e2f; font-weight:600;">Rp42k - Rp855k</div>
+    </div>
+  </div>
+
+</div>
+    <div class="resto-card-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px;">
+
+  <a href="detail.html?id=1" style="text-decoration:none;color:inherit">
+    <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+      <img src="images/lumpang-emas.jpg" alt="Lumpang Emas Signature" style="width:100%;height:180px;object-fit:cover;">
+      <div style="padding:18px;">
+        <div style="font-size:1.2rem;font-weight:700">🍖 Lumpang Emas Signature - Prapanca</div>
+        <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Prapanca Raya No.40A, Pulo, Kec. Kby. Baru, Jakarta Selatan</div>
+        <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.8</span> <span style="font-size:.8rem;">(1127 ulasan)</span></div>
+        <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Paru Asam Manis, Kulit Ayam Goreng, Steak Nusantara</span></div>
+        <div style="color: #2c6e2f; font-weight:600;">Rp87k - Rp393k</div>
+        <button class="btn-reserve" style="margin-top:15px;background:#e67e22;border:none;color:white;padding:8px 20px;font-family:'Poppins';border-radius:30px;font-weight:600;cursor:pointer;">Reservasi</button>
+      </div>
+    </div>
+  </a>
+
+  <a href="detail.html?id=2" style="text-decoration:none;color:inherit">
+    <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+      <img src="images/cerita-rasa.jpg" alt="Cerita Rasa Nusantara" style="width:100%;height:180px;object-fit:cover;">
+      <div style="padding:18px;">
+        <div style="font-size:1.2rem;font-weight:700">🍛 Cerita Rasa Nusantara</div>
+        <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Ampera Raya No.9, Cilandak Timur, Jakarta Selatan</div>
+        <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.6</span> <span style="font-size:.8rem;">(4795 ulasan)</span></div>
+        <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Gurame Bakar, Ayam Taliwang, Nasi Goreng</span></div>
+        <div style="color: #2c6e2f; font-weight:600;">Rp39k - Rp169k</div>
+        <button class="btn-reserve" style="margin-top:15px;background:#e67e22;border:none;color:white;padding:8px 20px;font-family:'Poppins';border-radius:30px;font-weight:600;cursor:pointer;">Reservasi</button>
+      </div>
+    </div>
+  </a>
+
+  <a href="detail.html?id=3" style="text-decoration:none;color:inherit">
+    <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+      <img src="images/jakarta-restaurant.jpg" alt="Jakarta Restaurant & The Courtyard" style="width:100%;height:180px;object-fit:cover;">
+      <div style="padding:18px;">
+        <div style="font-size:1.2rem;font-weight:700">🍽️ Jakarta Restaurant &amp; The Courtyard</div>
+        <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Brawijaya Raya No.26, Pulo, Kebayoran Baru</div>
+        <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.7</span> <span style="font-size:.8rem;">(639 ulasan)</span></div>
+        <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Sop Buntut, Nasi Goreng Dharmawangsa, Beef Tenderloin</span></div>
+        <div style="color: #2c6e2f; font-weight:600;">Rp115k - Rp595k</div>
+        <button class="btn-reserve" style="margin-top:15px;background:#e67e22;border:none;color:white;padding:8px 20px;font-family:'Poppins';border-radius:30px;font-weight:600;cursor:pointer;">Reservasi</button>
+      </div>
+    </div>
+  </a>
+
+  <a href="detail.html?id=4" style="text-decoration:none;color:inherit">
+    <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+      <img src="images/plataran.jpg" alt="Plataran Dharmawangsa" style="width:100%;height:180px;object-fit:cover;">
+      <div style="padding:18px;">
+        <div style="font-size:1.2rem;font-weight:700">🍲 Plataran Dharmawangsa</div>
+        <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Dharmawangsa Raya No.6, Pulo, Kebayoran Baru</div>
+        <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.7</span> <span style="font-size:.8rem;">(4112 ulasan)</span></div>
+        <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Dendeng Batokok, Empal Gentong, Udang Gandum</span></div>
+        <div style="color: #2c6e2f; font-weight:600;">Rp55k - Rp225k</div>
+        <button class="btn-reserve" style="margin-top:15px;background:#e67e22;border:none;color:white;padding:8px 20px;font-family:'Poppins';border-radius:30px;font-weight:600;cursor:pointer;">Reservasi</button>
+      </div>
+    </div>
+  </a>
+
+  <a href="detail.html?id=5" style="text-decoration:none;color:inherit">
+    <div class="resto-card" style="background:#fff; border-radius:18px; box-shadow:0 2px 10px #0001; overflow:hidden; transition:.2s;">
+      <img src="images/abunawas.jpg" alt="Abunawas Restaurant - Kemang" style="width:100%;height:180px;object-fit:cover;">
+      <div style="padding:18px;">
+        <div style="font-size:1.2rem;font-weight:700">🥘 Abunawas Restaurant - Kemang</div>
+        <div style="color:#888; font-size:.92rem; margin:6px 0 12px;"><i class="fas fa-map-marker-alt"></i> Jl. Kemang Utara No.15, Bangka, Mampang Prapatan</div>
+        <div style="margin-bottom:4px;"><span style="font-weight:600; color: #e67e22;">⭐ 4.6</span> <span style="font-size:.8rem;">(3173 ulasan)</span></div>
+        <div style="margin-bottom:4px;">Menu: <span style="font-size:.95rem">Mandhi Lamb, Briyani, Mix Grill, Hummus</span></div>
+        <div style="color: #2c6e2f; font-weight:600;">Rp42k - Rp855k</div>
+        <button class="btn-reserve" style="margin-top:15px;background:#e67e22;border:none;color:white;padding:8px 20px;font-family:'Poppins';border-radius:30px;font-weight:600;cursor:pointer;">Reservasi</button>
+      </div>
+    </div>
+  </a>
+</div>
+    // Place in RestaurantCard.jsx
+import React from 'react';
+
+export default function RestaurantCard({ resto }) {
+  return (
+    <a
+      href={`detail.html?id=${resto.id}`}
+      style={{ textDecoration: 'none', color: 'inherit', display:'block' }}
+    >
+      <div style={{
+        background: '#fff',
+        borderRadius: 18,
+        boxShadow: '0 2px 10px #0001',
+        overflow: 'hidden',
+        marginBottom: 32,
+        transition: '.2s'
+      }}>
+        <img src={resto.photo} alt={resto.name} style={{
+          width: '100%',
+          height: 180,
+          objectFit: 'cover',
+        }} />
+        <div style={{ padding: 18 }}>
+          <div style={{ fontSize: '1.2rem', fontWeight: 700 }}>{resto.imgIcon} {resto.name}</div>
+          <div style={{ color: '#888', fontSize: '.92rem', margin: '6px 0 12px' }}>
+            <i className="fas fa-map-marker-alt"></i> {resto.location}
+          </div>
+          <div style={{ marginBottom: 4 }}>
+            <span style={{ fontWeight: 600, color: '#e67e22' }}>⭐ {resto.rating}</span>
+            <span style={{ fontSize: '.8rem' }}> ({resto.totalReviews} ulasan)</span>
+          </div>
+          <div style={{ marginBottom: 4 }}>
+            Menu: <span style={{ fontSize: '.95rem' }}>{resto.menuHighlights}</span>
+          </div>
+          <div style={{ color: '#2c6e2f', fontWeight: 600 }}>{resto.priceRange}</div>
+          <button
+            className="btn-reserve"
+            style={{
+              marginTop: 15,
+              background: '#e67e22',
+              border: 'none',
+              color: 'white',
+              padding: '8px 20px',
+              fontFamily: 'Poppins, sans-serif',
+              borderRadius: 30,
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+            onClick={e => {
+              e.preventDefault(); // Prevent anchor navigation if you want modal instead
+              alert(`Fitur reservasi untuk ${resto.name}`);
+            }}
+          >Reservasi</button>
+        </div>
+      </div>
+    </a>
+  );
+}
+  </script>
+</body>
+</html>
